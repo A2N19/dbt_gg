@@ -2,37 +2,69 @@ version: 2
 
 sources:
   - name: jaffle_shop
+    description: "Исходные данные (CSV) для Jaffle Shop"
     tables:
       - name: customers
+        description: "Сырые данные по клиентам"
       - name: orders
+        description: "Сырые данные по заказам"
       - name: payments
+        description: "Сырые данные по платежам"
 
 models:
   - name: stg_customer_profiles
+    description: "Очищенные и нормализованные данные клиентов"
     columns:
       - name: customer_id
+        description: "Уникальный идентификатор клиента"
         tests:
           - unique
           - not_null
+      - name: first_name
+        description: "Имя клиента"
+      - name: last_name
+        description: "Фамилия клиента"
+      - name: full_name
+        description: "Полное имя клиента (first_name || ' ' || last_name')"
 
   - name: stg_order_records
+    description: "Очищенные данные заказов"
     columns:
       - name: order_id
+        description: "Уникальный идентификатор заказа"
         tests:
           - unique
           - not_null
+      - name: customer_id
+        description: "Ссылка на клиента (foreign key)"
+        tests:
+          - not_null
+      - name: order_date
+        description: "Дата и время заказа"
       - name: status
+        description: "Статус заказа"
         tests:
           - accepted_values:
               values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
 
   - name: stg_payment_logs
+    description: "Очищенные данные платежей"
     columns:
       - name: payment_id
+        description: "Уникальный идентификатор платежа"
         tests:
           - unique
           - not_null
+      - name: order_id
+        description: "Ссылка на заказ (foreign key)"
+        tests:
+          - not_null
       - name: payment_method
+        description: "Метод оплаты"
         tests:
           - accepted_values:
               values: ['credit_card', 'coupon', 'bank_transfer', 'gift_card']
+      - name: amount
+        description: "Сумма платежа"
+        tests:
+          - not_null
